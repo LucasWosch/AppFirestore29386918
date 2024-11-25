@@ -83,15 +83,39 @@ abstract class FirestoreAdapter<VH : RecyclerView.ViewHolder>(private var query:
             for (change in documentSnapshots.documentChanges) {
                 when (change.type) {
                     DocumentChange.Type.ADDED -> {
+                        onDocumentAdded(change)
                     }
                     DocumentChange.Type.MODIFIED -> {
+                        onDocumentModified(change)
                     }
                     DocumentChange.Type.REMOVED -> {
+                        onDocumentRemoved(change)
                     }
                 }
             }
         }
 
         onDataChanged()
+    }
+
+    private fun onDocumentAdded(change: DocumentChange) {
+        snapshots.add(change.newIndex, change.document)
+        notifyItemInserted(change.newIndex)
+    }
+
+    private fun onDocumentModified(change: DocumentChange) {
+        if (change.oldIndex == change.newIndex) {
+            snapshots[change.oldIndex] = change.document
+            notifyItemChanged(change.oldIndex)
+        } else {
+            snapshots.removeAt(change.oldIndex)
+            snapshots.add(change.newIndex, change.document)
+            notifyItemMoved(change.oldIndex, change.newIndex)
+        }
+    }
+
+    private fun onDocumentRemoved(change: DocumentChange) {
+        snapshots.removeAt(change.oldIndex)
+        notifyItemRemoved(change.oldIndex)
     }
 }
