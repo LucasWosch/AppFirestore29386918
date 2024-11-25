@@ -24,6 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import br.edu.up.rgm29386918.fireeats.databinding.FragmentMainBinding
 import br.edu.up.rgm29386918.fireeats.adapter.RestaurantAdapter
+import br.edu.up.rgm29386918.fireeats.model.Restaurant
 import br.edu.up.rgm29386918.fireeats.util.RestaurantUtil
 import br.edu.up.rgm29386918.fireeats.viewmodel.MainActivityViewModel
 import com.google.firebase.firestore.DocumentSnapshot
@@ -182,16 +183,34 @@ class MainFragment : Fragment(),
     }
 
     override fun onFilter(filters: Filters) {
-        // TODO(developer): Construct new query
+        var query: Query = firestore.collection("restaurants")
 
-        // Set header
+        if (filters.hasCategory()) {
+            query = query.whereEqualTo(Restaurant.FIELD_CATEGORY, filters.category)
+        }
+
+        if (filters.hasCity()) {
+            query = query.whereEqualTo(Restaurant.FIELD_CITY, filters.city)
+        }
+
+        if (filters.hasPrice()) {
+            query = query.whereEqualTo(Restaurant.FIELD_PRICE, filters.price)
+        }
+
+        if (filters.hasSortBy()) {
+            query = query.orderBy(filters.sortBy.toString(), filters.sortDirection)
+        }
+
+        query = query.limit(LIMIT.toLong())
+
+        adapter?.setQuery(query)
+
         binding.textCurrentSearch.text = HtmlCompat.fromHtml(
             filters.getSearchDescription(requireContext()),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
         binding.textCurrentSortBy.text = filters.getOrderDescription(requireContext())
 
-        // Save filters
         viewModel.filters = filters
     }
 
