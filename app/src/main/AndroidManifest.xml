@@ -24,9 +24,9 @@
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="merge">
-            <meta-data  android:name="com.google.firebase.example.fireeats.util.FirestoreInitializer"
+            <meta-data  android:name="br.edu.up.rgm29386918.fireeats.util.FirestoreInitializer"
                 android:value="androidx.startup" />
-            <meta-data  android:name="com.google.firebase.example.fireeats.util.AuthInitializer"
+            <meta-data  android:name="br.edu.up.rgm29386918.fireeats.util.AuthInitializer"
                 android:value="androidx.startup" />
         </provider>
     </application>
