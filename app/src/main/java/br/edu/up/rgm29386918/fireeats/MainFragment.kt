@@ -71,6 +71,10 @@ class MainFragment : Fragment(),
         // Firestore
         firestore = Firebase.firestore
 
+        query = firestore.collection("restaurants")
+            .orderBy("avgRating", Query.Direction.DESCENDING)
+            .limit(LIMIT.toLong())
+
         // RecyclerView
         query?.let {
             adapter = object : RestaurantAdapter(it, this@MainFragment) {
